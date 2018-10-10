@@ -1,0 +1,124 @@
+<html>
+<head>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <title>City Finder</title>
+  <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="main.css" />
+
+  <script>
+  /*global $*/
+  $(document).ready(function() {
+    $( "#cityField" ).keyup(function() {
+      var url = "http://bioresearch.byu.edu/cs260/jquery/getcity.cgi?q="+$("#cityField").val();
+      $.getJSON(url,function(data) {
+        var everything;
+        everything = "<ul>";
+        $.each(data, function(i,item) {
+          everything += "<li> "+data[i].city;
+        });
+        everything += "</ul>";
+        $("#txtHint").html(everything);
+      })
+      .done(function() { console.log('getJSON request succeeded!'); })
+      .fail(function(jqXHR, textStatus, errorThrown) { 
+        console.log('getJSON request failed! ' + textStatus); 
+        console.log("incoming "+jqXHR.responseText);
+      })
+      .always(function() { console.log('getJSON request ended!');
+      });
+    });
+    
+    $("#weatherButton").click(function(e){
+      var value = $("#cityField").val();
+      console.log(value);
+      e.preventDefault();
+      $("#displayCity").text(value);
+      var myurl= "https://api.openweathermap.org/data/2.5/weather?units=imperial&appid=5186e7902f7cca68f0c03ef15152f674&q=";
+      myurl += value;
+      console.log(myurl);
+      $.ajax({
+        url : myurl,
+        dataType : "json",
+            success : function(parsed_json) {
+                var location = parsed_json['name'];
+                var weather = parsed_json['weather'][0]['main'];
+                var temp = parsed_json['main']['temp'];
+                var weather_icon = parsed_json['weather'][0]['icon'];
+                var humidity = parsed_json['main']['humidity'];
+                var temp_min = parsed_json['main']['temp_min'];
+                var temp_max = parsed_json['main']['temp_max'];
+                var wind_speed = parsed_json['wind']['speed'];
+                var everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+                everything += "<ul class=\'list-group list-group-flush\'>";
+                everything += "<li class=\"list-group-item list-group-item-action list-group-item-secondary\">Location: " + location;
+                everything += "<li class=\"list-group-item list-group-item-action list-group-item-secondary\">Weather: " + weather + " (" + temp + "&#8457;)";
+                everything += "<li class=\"list-group-item list-group-item-action list-group-item-secondary\">Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+                everything += "<li class=\"list-group-item list-group-item-action list-group-item-secondary\">Humidity: " + humidity + "%";
+                everything += "<li class=\"list-group-item list-group-item-action list-group-item-secondary\">Wind: " + wind_speed + " mph";
+                everything += "</ul>";
+                $("#weather").html(everything);
+            }
+      });
+    });
+    
+    $("#stackButton").click(function(e){
+      var value = $("#cityField").val();
+      console.log(value);
+      e.preventDefault();
+      $("#displayCity").text(value);
+      var stack_url = "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=" + $('#stackTerm').val() + "&site=stackoverflow";
+      console.log(stack_url);
+      $.ajax({
+        url : stack_url,
+        dataType : "json",
+            success : function(parsed_json) {
+                var item;
+                var questions = parsed_json['items'];
+                for (item in questions){
+                  var curr_quest = questions[item];
+                  var title = curr_quest['title'];
+                  if (title.length > 12){
+                    console.log(title)
+                    title = title.substring(0, 15);
+                    title += '...';
+                  }
+                  var new_entry = "<li class=\'list-group-item list-group-item-info\'>";
+                  new_entry += "<a href=\'";
+                  new_entry += curr_quest['link'];
+                  new_entry += "\'>";
+                  new_entry += title;
+                  new_entry += "</a></li>";
+                  $('#question-list').append(new_entry);
+                }
+                  
+            }
+      });
+    });
+  });
+  
+  </script>
+</head>
+<body>
+<form>
+Enter A Utah City: <input type="text" id="cityField" value="" class='form-control'><br>
+Suggestion: <span id="txtHint" class="form-group">Empty</span>
+<input id="weatherButton" type="submit" value="Submit">
+</form>
+<p>City</p>
+<textarea id="displayCity">No City</textarea>
+<p>Current Weather</p>
+<div id="weather" class="form-group">No weather</div>
+<br>
+<form>
+Enter a term to Query StackExchange for: <input type="text" id="stackTerm" value="" class='form-control'><br>
+<input id="stackButton" type="submit" value="Submit">
+</form>
+<div id="stack-exchange">
+  <ul id='question-list' class='list-group list-group-flush'>
+    
+  </ul>
+</div>
+
+</body>
+</html>

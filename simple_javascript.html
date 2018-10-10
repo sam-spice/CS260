@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" >
+            function increase_number(){
+                var the_number_element = document.getElementById('the_number')
+                var num_val = parseInt(the_number_element.innerHTML, 10)
+                the_number_element.innerHTML = ++num_val
+                console.log(num_val)
+            }
+        </script>
+    </head>
+ <body>
+ <h1>Behold my Number!</h1>
+ <p id="the_number">0</p>
+ <button onclick="increase_number()">Increase the Number</button>
+ </body>
+</html>
