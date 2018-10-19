@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- include our dependency on angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.min.js"></script>
+    <script src="image_picker.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <meta charset="utf-8">
+    <title>Lets Get Angular!</title>
+</head>
+
+<body>
+    <div class="parent" ng-app='app' ng-controller='mainCtrl'>
+        <h1>Lets get Angular!</h1>
+        <div>
+            <select id="drop-down" ng-model="image_source" ng-change="visible()">
+                <option ng-repeat="x in images" value={{x}}>{{x}}</option>
+            </select>
+        </div>
+        <img id="angle-image" ng-src="angles/{{image_source}}.svg" ng-style="angle_img">
+        
+
+    </div>
+</body>
+
+</html>

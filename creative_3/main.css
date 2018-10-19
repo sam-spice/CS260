@@ -1,0 +1,18 @@
+
+body {
+    text-align: center;
+    background-color: lightblue;
+}
+
+.parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#angle-image {
+    height: 10em;
+    width: 10em;
+    margin: 0 auto;
+    display: none;
+}
